@@ -113,6 +113,9 @@ import os
 from dotenv import load_dotenv
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
+from fastapi import FastAPI
+import uvicorn
+import threading
 
 load_dotenv()
 
@@ -143,7 +146,6 @@ def send_telegram_message(text):
 
 def is_special_number(n):
     str_n = str(n)
-
     if 1 <= n <= 30:
         return True
     if n % 100 == 0 or n % 1000 == 0:
@@ -152,16 +154,13 @@ def is_special_number(n):
         return True
     if len(set(str_n)) == 1:
         return True
-
     return False
 
 def filter_message(msg_text):
     name_match = re.search(r'Name:\s*(.+?)\s+#(\d+)', msg_text)
     cost_match = re.search(r'Cost:\s*([\d.]+)\s*TON', msg_text)
-
     if not name_match or not cost_match:
         return None
-
     raw_name = name_match.group(1).strip()
     number = int(name_match.group(2))
     cost = float(cost_match.group(1))
@@ -178,7 +177,6 @@ def filter_message(msg_text):
 
     return None
 
-# Ініціалізуємо клієнт з рядком сесії
 client = TelegramClient(StringSession(SESSION_STRING), api_id, api_hash)
 
 @client.on(events.NewMessage(chats='palaceoffers'))
@@ -191,10 +189,23 @@ async def handler(event):
     else:
         print("— Пропущено")
 
-async def main():
-    print("✅ Бот слухає @palaceoffers у реальному часі...")
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"status": "Bot is running"}
+
+async def start_bot():
     await client.start()
+    print("✅ Бот слухає @palaceoffers у реальному часі...")
     await client.run_until_disconnected()
 
-if __name__ == '__main__':
-    asyncio.run(main())
+def run_bot_loop():
+    asyncio.run(start_bot())
+
+if __name__ == "__main__":
+    # Запускаємо Telegram-бота в окремому потоці
+    threading.Thread(target=run_bot_loop, daemon=True).start()
+
+    # Запускаємо FastAPI сервер на 0.0.0.0:10000 (порт можна змінити)
+    uvicorn.run(app, host="0.0.0.0", port=10000)
