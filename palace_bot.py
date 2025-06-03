@@ -126,12 +126,12 @@ CHAT_ID = os.getenv("CHAT_ID")
 SESSION_STRING = os.getenv("SESSION_STRING")  # Рядок сесії
 
 FILTER_RULES = {
-    "King": 4.5,
+    "King": 5,
     "Doodles Dark Mode": 11,
-    "Mememania": 4.5,
-    "Pengu Valentines": 15,
-    "Cool Blue Pengu": 80,
-    "Blue Pengu": 35
+    "Mememania": 5,
+    "Pengu Valentines": 13,
+    "Cool Blue Pengu": 60,
+    "Blue Pengu": 32
 }
 
 def send_telegram_message(text):
@@ -172,7 +172,11 @@ def filter_message(msg_text):
             if cost < max_price:
                 return f"🔎 Знайдено фільтрований стікер:\n{raw_name} #{number}, {cost} TON"
 
-    if is_special_number(number):
+    # if is_special_number(number):
+    #     return f"🌟 Знайдено гарний номер:\n{raw_name} #{number}, {cost} TON"
+
+    # 💎 Перевірка на гарні номери з обмеженням по ціні
+    if is_special_number(number) and cost <= 20:
         return f"🌟 Знайдено гарний номер:\n{raw_name} #{number}, {cost} TON"
 
     return None
