@@ -236,11 +236,14 @@ SESSION_STRING = os.getenv("SESSION_STRING")  # Строка сесії
 # 🔍 Назва → [макс ціна, макс ціна за гарний номер]
 FILTER_RULES = {
     "King": [8, 30],
-    "Doodles Dark Mode": [15, 30],
+    "Doodles Dark Mode": [15, 40],
     "Mememania": [7, 18],
-    "Pengu Valentines": [20, 40],
+    "Pengu Valentines": [20, 50],
     "Cool Blue Pengu": [80, 110],
-    "Blue Pengu": [39, 55]
+    "Pengu CNY": [60, 110],
+    "Blue Pengu": [39, 55],
+    "Error Pixel": [6, 15],
+    "Retro Pixel": [6, 15]
 }
 
 def send_telegram_message(text):
